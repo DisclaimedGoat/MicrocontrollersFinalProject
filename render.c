@@ -4,23 +4,23 @@
 
 void renderScreen(array screen)
 {
-    for (unsigned int col = 1; col <= 8; col++)
+    for (unsigned long long col = 1; col <= 8; col++)
     {
-        unsigned int left = col << 4;
-        unsigned int topLeft =  0;
-        unsigned int topRight = 0;
-        unsigned int midLeft =  0;
-        unsigned int midRight = 0;
-        unsigned int botLeft =  0;
-        unsigned int botRight = 0;
+        unsigned long long left = col << 4;
+        unsigned long long topLeft =  0;
+        unsigned long long topRight = 0;
+        unsigned long long midLeft =  0;
+        unsigned long long midRight = 0;
+        unsigned long long botLeft =  0;
+        unsigned long long botRight = 0;
         for (unsigned int row = 0; row < 8; row++)
         {
-            unsigned int topLeft +=  screen[row] & left;
-            unsigned int topRight += screen[row] & col; 
-            unsigned int midLeft +=  screen[row + 4] & left;
-            unsigned int midRight += screen[row + 4] & col; 
-            unsigned int botLeft +=  screen[row + 8] & left;
-            unsigned int botRight += screen[row + 8] & col; 
+            topLeft +=  screen[row] & left;
+            topRight += screen[row] & col; 
+            midLeft +=  screen[row + 4] & left;
+            midRight += screen[row + 4] & col; 
+            botLeft +=  screen[row + 8] & left;
+            botRight += screen[row + 8] & col; 
         }
         unsigned long long leftLine =  (col << 8) + (col << 24) + (col << 40) + (botLeft << 32)  + (midLeft << 16)  + topLeft;
         unsigned long long rightLine = (col << 8) + (col << 24) + (col << 40) + (botRight << 32) + (midRight << 16) + topRight;
