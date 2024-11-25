@@ -30,13 +30,11 @@ int main(void){
 	// enable systick clock
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN; 
 	
-	// enable GPIO C clock
+	// enable clock for GPIO B and C
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN | RCC_AHB2ENR_GPIOBEN;
 	
 	set_pins_output(GPIOC, 4, P0, P1, P2, P3);
 	
-	// set pins PC0-2 to open-drain
-	// GPIOC->OTYPER |= 0x00000007;
 	
 	LED_Init();
 	
@@ -135,20 +133,20 @@ void SysTick_Handler(void)
 		timer = 50;
 	}
 	
-	sendLine(0, 0x015501550155);
-	sendLine(0, 0x025502550255);
-	sendLine(0, 0x035503550355);
-	sendLine(0, 0x045504550455);
-	sendLine(0, 0x055505550555);
-	sendLine(0, 0x065506550655);
-	sendLine(0, 0x075507550755);
-	sendLine(0, 0x085508550855);
+	sendLine(EMPTY48, uint48of1(0x0155));
+	sendLine(EMPTY48, uint48of1(0x0255));
+	sendLine(EMPTY48, uint48of1(0x0355));
+	sendLine(EMPTY48, uint48of1(0x0455));
+	sendLine(EMPTY48, uint48of1(0x0555));
+	sendLine(EMPTY48, uint48of1(0x0655));
+	sendLine(EMPTY48, uint48of1(0x0755));
+	sendLine(EMPTY48, uint48of1(0x0855));
 }
 
 void LED_Init(void)
 {
-	sendLine(0, 0x0C010C010C01); // Set to normal operation mode
-	sendLine(0, 0x090009000900); // No Font B decoding (this would only be for a 7 segment display)
-	sendLine(0, 0x0A000A000A00); // Set intensity to lowest value
-	sendLine(0, 0x0B070B070B07); // Enable all 8 rows
+	sendLine(EMPTY48, uint48of1(0x0C01)); // Set to normal operation mode
+	sendLine(EMPTY48, uint48of1(0x0900)); // No Font B decoding (this would only be for a 7 segment display)
+	sendLine(EMPTY48, uint48of1(0x0A00)); // Set intensity to lowest value
+	sendLine(EMPTY48, uint48of1(0x0B07)); // Enable all 8 rows
 }

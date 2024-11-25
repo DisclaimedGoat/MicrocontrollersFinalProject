@@ -29,22 +29,25 @@ void renderScreen(const array* screen)
 
 void sendLine(uint48 leftLine, uint48 rightLine) // Send 12 bits starting with MSB first (first 4 bits don't matter)
 {
+	unsigned int botTemp = rightLine.bot16 << 1;
+	unsigned int midTemp = rightLine.bot16 << 1;
+	unsigned int topTemp = rightLine.bot16 << 1;
 	for (int d = 15; d >= 0; d--)
 	{
 		GPIOC->ODR &= 0xFFFC;
-		GPIOC->ODR |= ((leftLine.bot16 >> d) & 0x1) | ((rightLine.bot16 >> (d - 1)) & 0x2);
+		GPIOC->ODR |= ((leftLine.bot16 >> d) & 0x1) | ((botTemp >> d) & 0x2);
 		toggleCLK();
 	}
 	for (int d = 15; d >= 0; d--)
 	{
 		GPIOC->ODR &= 0xFFFC;
-		GPIOC->ODR |= ((leftLine.mid16 >> d) & 0x1) | ((rightLine.mid16 >> (d - 1)) & 0x2);
+		GPIOC->ODR |= ((leftLine.bot16 >> d) & 0x1) | ((midTemp >> d) & 0x2);
 		toggleCLK();
 	}
 	for (int d = 15; d >= 0; d--)
 	{
 		GPIOC->ODR &= 0xFFFC;
-		GPIOC->ODR |= ((leftLine.top16 >> d) & 0x1) | ((rightLine.top16 >> (d - 1)) & 0x2);
+		GPIOC->ODR |= ((leftLine.bot16 >> d) & 0x1) | ((topTemp >> d) & 0x2);
 		toggleCLK();
 	}
 	

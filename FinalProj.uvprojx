@@ -439,6 +439,11 @@
               <FileType>5</FileType>
               <FilePath>.\types.h</FilePath>
             </File>
+            <File>
+              <FileName>types.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\types.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
