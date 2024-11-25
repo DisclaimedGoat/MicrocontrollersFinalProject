@@ -2,20 +2,9 @@
 #include "render.h"
 #include "game.h"
 #include "types.h"
+#include "stdlib.h"
 
-array startScreen;
-
-void gameLoop(void)
-{
-// Game logic stuffs
-
-    renderScreen(&startScreen);
-}
-
-void gameScreens_Init(void)
-{
-    startScreen = (array) malloc(sizeof(short) * SIZEY);
-    startScreen = {
+static const array START_SCREEN = {
         0b0000000000000000,
         0b0011100000000000,
         0b0100000001100000,
@@ -40,5 +29,18 @@ void gameScreens_Init(void)
         0b0000100000010000,
         0b0000011111100000,
         0b0000000000000000
-    };
+};
+
+static array* game_array;
+
+void gameLoop(void)
+{
+// Game logic stuffs
+
+    renderScreen(&START_SCREEN);
+}
+
+void gameScreens_Init(void)
+{
+    game_array = (array*) malloc(sizeof(short) * SIZEY);
 }
