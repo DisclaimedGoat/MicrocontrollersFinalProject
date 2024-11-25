@@ -16,8 +16,8 @@
         <TargetCommonOption>
           <Device>STM32L476RGTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32L4xx_DFP.2.6.1</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32L4xx_DFP.3.0.0</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00018000) IRAM2(0x10000000,0x00008000) IROM(0x08000000,0x00100000) CPUTYPE("Cortex-M4") FPU2 DSP CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -329,7 +329,7 @@
             <uC99>1</uC99>
             <uGnu>1</uGnu>
             <useXO>0</useXO>
-            <v6Lang>3</v6Lang>
+            <v6Lang>5</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -399,6 +399,26 @@
               <FileType>5</FileType>
               <FilePath>.\stm32l476xx.h</FilePath>
             </File>
+            <File>
+              <FileName>game.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\game.c</FilePath>
+            </File>
+            <File>
+              <FileName>game.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\game.h</FilePath>
+            </File>
+            <File>
+              <FileName>render.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\render.c</FilePath>
+            </File>
+            <File>
+              <FileName>render.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\render.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -413,6 +433,11 @@
               <FileName>ports.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\ports.c</FilePath>
+            </File>
+            <File>
+              <FileName>types.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\types.h</FilePath>
             </File>
           </Files>
         </Group>

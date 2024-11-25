@@ -1,5 +1,4 @@
 #include "stm32l476xx.h"
-#include "LCD.h"
 #include "ports.h"
 #include "render.h"
 #include <stdio.h>
@@ -131,8 +130,8 @@ void SysTick_Handler(void)
 
 void LED_Init(void)
 {
-	sendLine(0x0C010C010C01); // Set to normal operation mode
-	sendLine(0x090009000900); // No Font B decoding (this would only be for a 7 segment display)
-	sendLine(0x0A000A000A00); // Set intensity to lowest value
-	sendLine(0x0B070B070B07); // Enable all 8 rows
+	sendLine(0x0C010C010C01, 0); // Set to normal operation mode
+	sendLine(0x090009000900, 0); // No Font B decoding (this would only be for a 7 segment display)
+	sendLine(0x0A000A000A00, 0); // Set intensity to lowest value
+	sendLine(0x0B070B070B07, 0); // Enable all 8 rows
 }
