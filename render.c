@@ -2,7 +2,7 @@
 #include "render.h"
 #include "types.h"
 
-void renderScreen(array screen)
+void renderScreen(const array* screen)
 {
     for (unsigned long long col = 1; col <= 8; col++)
     {
@@ -15,12 +15,12 @@ void renderScreen(array screen)
         unsigned long long botRight = 0;
         for (unsigned int row = 0; row < 8; row++)
         {
-            topLeft +=  screen[row] & left;
-            topRight += screen[row] & col; 
-            midLeft +=  screen[row + 4] & left;
-            midRight += screen[row + 4] & col; 
-            botLeft +=  screen[row + 8] & left;
-            botRight += screen[row + 8] & col; 
+            topLeft +=  (*screen)[row] & left;
+            topRight += (*screen)[row] & col; 
+            midLeft +=  (*screen)[row + 4] & left;
+            midRight += (*screen)[row + 4] & col; 
+            botLeft +=  (*screen)[row + 8] & left;
+            botRight += (*screen)[row + 8] & col; 
         }
         unsigned long long leftLine =  (col << 8) + (col << 24) + (col << 40) + (botLeft << 32)  + (midLeft << 16)  + topLeft;
         unsigned long long rightLine = (col << 8) + (col << 24) + (col << 40) + (botRight << 32) + (midRight << 16) + topRight;
@@ -29,7 +29,7 @@ void renderScreen(array screen)
 
 void sendLine(unsigned long long leftLine, unsigned long long rightLine) // Send 12 bits starting with MSB first (first 4 bits don't matter)
 {
-	for (int d = 48; d >= 0; d--)
+	for (int d = 47; d > 0; d--)
 	{
 		GPIOC->ODR &= 0xFFFC; 			                                        // Set PC0 and PC1 to low
 		GPIOC->ODR |= ((leftLine >> d) & 0x1) | ((rightLine >> (d - 1)) & 0x2); // Set bits

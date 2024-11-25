@@ -1,10 +1,8 @@
 #include "stm32l476xx.h"
 #include "ports.h"
 #include "render.h"
+#include "game.h"
 #include <stdio.h>
-
-#define STOP 0
-#define GO 1
 
 // PB0 -> Reset
 // PB1 -> Pause
@@ -38,11 +36,6 @@ int main(void){
 	
 	// set pins PC0-2 to open-drain
 	// GPIOC->OTYPER |= 0x00000007;
-	
-	GPIOC->ODR &= 0xFFF8;
-	
-	GPIOC->ODR |= 0x0002;
-	GPIOC->ODR &= 0xFFFD;
 	
 	LED_Init();
 	
@@ -125,13 +118,21 @@ void SysTick_Handler(void)
 		bit = ~bit;
 		timer = 50;
 	}
-	// renderScreen(array);
+	
+	sendLine(0, 0x015501550155);
+	sendLine(0, 0x025502550255);
+	sendLine(0, 0x035503550355);
+	sendLine(0, 0x045504550455);
+	sendLine(0, 0x055505550555);
+	sendLine(0, 0x065506550655);
+	sendLine(0, 0x075507550755);
+	sendLine(0, 0x085508550855);
 }
 
 void LED_Init(void)
 {
-	sendLine(0x0C010C010C01, 0); // Set to normal operation mode
-	sendLine(0x090009000900, 0); // No Font B decoding (this would only be for a 7 segment display)
-	sendLine(0x0A000A000A00, 0); // Set intensity to lowest value
-	sendLine(0x0B070B070B07, 0); // Enable all 8 rows
+	sendLine(0, 0x0C010C010C01); // Set to normal operation mode
+	sendLine(0, 0x090009000900); // No Font B decoding (this would only be for a 7 segment display)
+	sendLine(0, 0x0A000A000A00); // Set intensity to lowest value
+	sendLine(0, 0x0B070B070B07); // Enable all 8 rows
 }
