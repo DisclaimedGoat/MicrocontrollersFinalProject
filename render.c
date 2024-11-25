@@ -4,28 +4,22 @@
 
 void renderScreen(const array* screen)
 {
+		unsigned long long left = 0x1;
+    unsigned long long right = 0x100;
     for (unsigned long long col = 1; col <= 8; col++)
     {
 			  uint48 leftLine =  { col << 40, col << 24, col << 8 };
 				uint48 rightLine = { col << 40, col << 24, col << 8 };
-        unsigned long long left = col << 4;
-        unsigned long long topLeft =  0;
-        unsigned long long topRight = 0;
-        unsigned long long midLeft =  0;
-        unsigned long long midRight = 0;
-        unsigned long long botLeft =  0;
-        unsigned long long botRight = 0;
         for (unsigned int row = 0; row < 8; row++)
         {
-            topLeft +=  (*screen)[row] & left;
-            topRight += (*screen)[row] & col; 
-            midLeft +=  (*screen)[row + 4] & left;
-            midRight += (*screen)[row + 4] & col; 
-            botLeft +=  (*screen)[row + 8] & left;
-            botRight += (*screen)[row + 8] & col; 
+            leftLine.top16 +=  (*screen)[row]     & (left << (col - 1));
+            rightLine.top16 += (*screen)[row]     & (right << (col - 1)); 
+            leftLine.mid16 +=  (*screen)[row + 4] & (left << (col - 1));
+            rightLine.mid16 += (*screen)[row + 4] & (right << (col - 1)); 
+            leftLine.bot16 +=  (*screen)[row + 8] & (left << (col - 1));
+            rightLine.bot16 += (*screen)[row + 8] & (right << (col - 1)); 
         }
-        uint48 leftLine  = { (col << 40) + (col << 8) + (col << 24) + (col << 40) + (botLeft << 32)  + (midLeft << 16)  + topLeft;
-        uint48 rightLine = (col << 8) + (col << 24) + (col << 40) + (botRight << 32) + (midRight << 16) + topRight;
+        sendLine(leftLine, rightLine)
     }
 }
 
