@@ -1,7 +1,6 @@
 #include "stm32l476xx.h"
 #include "render.h"
 #include "game.h"
-#include "types.h"
 #include "stdlib.h"
 
 static const array START_SCREEN = {
@@ -40,7 +39,11 @@ void gameLoop(void)
     renderScreen(&START_SCREEN);
 }
 
-void gameScreens_Init(void)
+void set_game_screen(const array* screen) {
+	
+}
+
+void game_init(void)
 {
     game_array = (array*) malloc(sizeof(short) * SIZEY);
 }
