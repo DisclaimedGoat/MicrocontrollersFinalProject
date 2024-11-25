@@ -27,16 +27,28 @@ void renderScreen(const array* screen)
     }
 }
 
-void sendLine(unsigned long long leftLine, unsigned long long rightLine) // Send 12 bits starting with MSB first (first 4 bits don't matter)
+void sendLine(uint48 leftLine, uint48 rightLine) // Send 12 bits starting with MSB first (first 4 bits don't matter)
 {
-	for (int d = 47; d > 0; d--)
+	for (int d = 15; d >= 0; d--)
 	{
-		GPIOC->ODR &= 0xFFFC; 			                                        // Set PC0 and PC1 to low
-		GPIOC->ODR |= ((leftLine >> d) & 0x1) | ((rightLine >> (d - 1)) & 0x2); // Set bits
-		toggleCLK();											                // Load bit
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((leftLine.bot16 >> d) & 0x1) | ((rightLine.bot16 >> (d - 1)) & 0x2);
+		toggleCLK();
+	}
+	for (int d = 15; d >= 0; d--)
+	{
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((leftLine.mid16 >> d) & 0x1) | ((rightLine.mid16 >> (d - 1)) & 0x2);
+		toggleCLK();
+	}
+	for (int d = 15; d >= 0; d--)
+	{
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((leftLine.top16 >> d) & 0x1) | ((rightLine.top16 >> (d - 1)) & 0x2);
+		toggleCLK();
 	}
 	
-	// toggle pin PC1 (CS) to load line
+	// toggle pin PC2 (CS) to load line
 	GPIOC->ODR |= 0x0004;
 	GPIOC->ODR &= 0xFFFB;
 }
