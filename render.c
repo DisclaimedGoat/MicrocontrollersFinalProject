@@ -6,6 +6,8 @@ void renderScreen(const array* screen)
 {
     for (unsigned long long col = 1; col <= 8; col++)
     {
+			  uint48 leftLine =  { col << 40, col << 24, col << 8 };
+				uint48 rightLine = { col << 40, col << 24, col << 8 };
         unsigned long long left = col << 4;
         unsigned long long topLeft =  0;
         unsigned long long topRight = 0;
@@ -22,8 +24,8 @@ void renderScreen(const array* screen)
             botLeft +=  (*screen)[row + 8] & left;
             botRight += (*screen)[row + 8] & col; 
         }
-        unsigned long long leftLine =  (col << 8) + (col << 24) + (col << 40) + (botLeft << 32)  + (midLeft << 16)  + topLeft;
-        unsigned long long rightLine = (col << 8) + (col << 24) + (col << 40) + (botRight << 32) + (midRight << 16) + topRight;
+        uint48 leftLine  = { (col << 40) + (col << 8) + (col << 24) + (col << 40) + (botLeft << 32)  + (midLeft << 16)  + topLeft;
+        uint48 rightLine = (col << 8) + (col << 24) + (col << 40) + (botRight << 32) + (midRight << 16) + topRight;
     }
 }
 
