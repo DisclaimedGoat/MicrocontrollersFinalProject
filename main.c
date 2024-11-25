@@ -133,6 +133,7 @@ void SysTick_Handler(void)
 		timer = 50;
 	}
 	
+	next_game_frame();
 	sendLine(EMPTY48, uint48of1(0x0155));
 	sendLine(EMPTY48, uint48of1(0x0255));
 	sendLine(EMPTY48, uint48of1(0x0355));

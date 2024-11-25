@@ -11,12 +11,12 @@ void renderScreen(const array* screen)
 				uint48 rightLine = { col << 8, col << 8, col << 8 };
         for (unsigned int row = 0, col_bit = 8; row < 8; row++, col_bit--)
         {
-            leftLine.top16 +=  (*screen)[row]     & ((bit << (col + 7)) >> (col - row + 8));
-            rightLine.top16 += (*screen)[row]     & (bit << (col - 1)); 
-            leftLine.mid16 +=  (*screen)[row + 8] & ((bit << (col + 7)) >> 8);
-            rightLine.mid16 += (*screen)[row + 8] & (bit << (col - 1)); 
-            leftLine.bot16 +=  (*screen)[row + 16] & ((bit << (col + 7)) >> 8);
-            rightLine.bot16 += (*screen)[row + 16] & (bit << (col - 1)); 
+            leftLine.top16  |= (((*screen)[row]      >> (col - 1)) & 0x1) << row;
+            rightLine.top16 |= (((*screen)[row]      >> (col + 7)) & 0x1) << row;
+            leftLine.mid16  |= (((*screen)[row + 8]  >> (col - 1)) & 0x1) << row;
+            rightLine.mid16 |= (((*screen)[row + 8]  >> (col + 7)) & 0x1) << row;
+            leftLine.bot16  |= (((*screen)[row + 16] >> (col - 1)) & 0x1) << row;
+            rightLine.bot16 |= (((*screen)[row + 16] >> (col + 7)) & 0x1) << row;
         }
         sendLine(leftLine, rightLine);
     }
