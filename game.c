@@ -32,7 +32,12 @@ static const array START_SCREEN = {
 
 static array* game_array;
 
-void gameLoop(void)
+void game_init(void)
+{
+    game_array = (array*) malloc(sizeof(short) * SIZEY);
+}
+
+void next_game_frame(void)
 {
 // Game logic stuffs
 
@@ -43,7 +48,18 @@ void set_game_screen(const array* screen) {
 	
 }
 
-void game_init(void)
-{
-    game_array = (array*) malloc(sizeof(short) * SIZEY);
+void red_button_pressed(void) {
+	
+}
+
+void green_button_pressed(void) {
+	
+}
+
+void yellow_button_pressed(void) {
+	
+}
+
+void blue_button_pressed(void) {
+	
 }
