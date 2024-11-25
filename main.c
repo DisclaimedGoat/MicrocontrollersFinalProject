@@ -119,7 +119,14 @@ void SysTick_Handler(void)
 		timer = 50;
 	}
 	
-	gameLoop();
+	sendLine(0, 0x015501550155);
+	sendLine(0, 0x025502550255);
+	sendLine(0, 0x035503550355);
+	sendLine(0, 0x045504550455);
+	sendLine(0, 0x055505550555);
+	sendLine(0, 0x065506550655);
+	sendLine(0, 0x075507550755);
+	sendLine(0, 0x085508550855);
 }
 
 void LED_Init(void)

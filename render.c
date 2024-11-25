@@ -29,7 +29,7 @@ void renderScreen(const array* screen)
 
 void sendLine(unsigned long long leftLine, unsigned long long rightLine) // Send 12 bits starting with MSB first (first 4 bits don't matter)
 {
-	for (int d = 48; d >= 0; d--)
+	for (int d = 47; d > 0; d--)
 	{
 		GPIOC->ODR &= 0xFFFC; 			                                        // Set PC0 and PC1 to low
 		GPIOC->ODR |= ((leftLine >> d) & 0x1) | ((rightLine >> (d - 1)) & 0x2); // Set bits
