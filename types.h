@@ -3,7 +3,8 @@
 #define SIZEX 16
 #define SIZEY 24
 
-typedef unsigned short array[24];
+typedef unsigned short array[SIZEY];
+typedef unsigned int hArray[SIZEX];
 
 typedef struct uint48 {
 	unsigned short top16;

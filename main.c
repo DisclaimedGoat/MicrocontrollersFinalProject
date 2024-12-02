@@ -22,6 +22,7 @@ void SysTick_Handler(void);
 void SysTick_Init(uint32_t ticks);
 void LED_Init(void);
 
+
 int main(void){
 	
 	RCC->CR |= RCC_CR_HSION;
@@ -133,15 +134,21 @@ void SysTick_Handler(void)
 		timer = 50;
 	}
 	
+	uint48 tester;
+	tester.bot16 = 0x04AA;
+	tester.mid16 = 0x0402;
+	tester.top16 = 0x0435;
+	
+	game_init();
 	next_game_frame();
-	sendLine(EMPTY48, uint48of1(0x0155));
-	sendLine(EMPTY48, uint48of1(0x0255));
-	sendLine(EMPTY48, uint48of1(0x0355));
-	sendLine(EMPTY48, uint48of1(0x0455));
-	sendLine(EMPTY48, uint48of1(0x0555));
-	sendLine(EMPTY48, uint48of1(0x0655));
-	sendLine(EMPTY48, uint48of1(0x0755));
-	sendLine(EMPTY48, uint48of1(0x0855));
+	// sendLine(EMPTY48, uint48of1(0x0155));
+	// sendLine(EMPTY48, uint48of1(0x0255));
+	// sendLine(EMPTY48, uint48of1(0x0355));
+	// sendLine(EMPTY48, tester);
+	// sendLine(EMPTY48, uint48of1(0x0555));
+	// sendLine(EMPTY48, uint48of1(0x0655));
+	// sendLine(EMPTY48, uint48of1(0x0755));
+	// sendLine(EMPTY48, uint48of1(0x0855));
 }
 
 void LED_Init(void)

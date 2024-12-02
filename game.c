@@ -1,78 +1,32 @@
 #include "stm32l476xx.h"
 #include "render.h"
 #include "game.h"
+#include "screens.h"
 #include "stdlib.h"
 
-static const array START_SCREEN = {
-        0b0000000000000000,
-        0b0011100000000000,
-        0b0100000001100000,
-        0b0101110010010000,
-        0b0100010010010000,
-        0b0011100001100000,
-        0b0000000000000000,
-        0b0000011100000000,
-        0b0000100000001100,
-        0b0000101110010010,
-        0b0000100010010010,
-        0b0000011100001100,
-        0b0000000000000000,
-        0b0000111000000000,
-        0b0001000000011000,
-        0b0001011100100100,
-        0b0001000100100100,
-        0b0000111000011000,
-        0b0000000000000000,
-        0b0000001001000000,
-        0b0000001001000000,
-        0b0000100000010000,
-        0b0000011111100000,
-        0b0000000000000000
-};
+#define NONE  0
+#define LEFT  1
+#define RIGHT 2
 
-static const array TEST_SCREEN = {
-        0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-	      0b1010101010101010,
-				0b1010101010101010,
-				0b1010101010101010,
-				0b1010101010101010
-};
-
-static array* game_array;
+static hArray* game_array;
+static int RUNNING = 0;
+static int DIRECTION = NONE;
 
 void game_init(void)
 {
-    game_array = (array*) malloc(sizeof(short) * SIZEY);
+    game_array = (hArray*) malloc(sizeof(int) * SIZEX);
+    game_array = &TEST_HORIZONTAL_SCREEN;
 }
 
 void next_game_frame(void)
 {
-// Game logic stuffs
+    if (game_array[12] == 0)
+    {
+        //
+    }
 
-    renderScreen(&TEST_SCREEN);
-}
-
-void set_game_screen(const array* screen) {
-	
+    // renderScreen(game_array);
+    renderScreenHorizontal(game_array);
 }
 
 void red_button_pressed(void) {
