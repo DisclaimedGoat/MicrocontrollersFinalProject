@@ -38,6 +38,8 @@ int main(void){
 	
 	
 	LED_Init();
+
+	game_init();
 	
 
 	
@@ -138,8 +140,7 @@ void SysTick_Handler(void)
 	tester.bot16 = 0x04AA;
 	tester.mid16 = 0x0402;
 	tester.top16 = 0x0435;
-	
-	game_init();
+
 	next_game_frame();
 	// sendLine(EMPTY48, uint48of1(0x0155));
 	// sendLine(EMPTY48, uint48of1(0x0255));
@@ -153,8 +154,8 @@ void SysTick_Handler(void)
 
 void LED_Init(void)
 {
-	sendLine(EMPTY48, uint48of1(0x0C01)); // Set to normal operation mode
-	sendLine(EMPTY48, uint48of1(0x0900)); // No Font B decoding (this would only be for a 7 segment display)
-	sendLine(EMPTY48, uint48of1(0x0A00)); // Set intensity to lowest value
-	sendLine(EMPTY48, uint48of1(0x0B07)); // Enable all 8 rows
+	sendCommand(uint48of1(0x0C01)); // Set to normal operation mode
+	sendCommand(uint48of1(0x0900)); // No Font B decoding (this would only be for a 7 segment display)
+	sendCommand(uint48of1(0x0A00)); // Set intensity to lowest value
+	sendCommand(uint48of1(0x0B07)); // Enable all 8 rows
 }

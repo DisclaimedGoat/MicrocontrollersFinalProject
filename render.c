@@ -36,22 +36,89 @@ void sendLine(uint48 leftLine, uint48 rightLine) // Send 12 bits starting with M
 	unsigned int botTemp = rightLine.bot16 << 1;
 	unsigned int midTemp = rightLine.mid16 << 1;
 	unsigned int topTemp = rightLine.top16 << 1;
-	for (int d = 15; d >= 0; d--)
+	for (int d = 15; d >= 8; d--)
 	{
 		GPIOC->ODR &= 0xFFFC;
 		GPIOC->ODR |= ((leftLine.bot16 >> d) & 0x1) | ((botTemp >> d) & 0x2);
 		toggleCLK();
 	}
-	for (int d = 15; d >= 0; d--)
+	for (int d = 0; d < 8; d++)
+	{
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((leftLine.bot16 >> d) & 0x1) | ((botTemp >> d) & 0x2);
+		toggleCLK();
+	}
+	for (int d = 15; d >= 8; d--)
 	{
 		GPIOC->ODR &= 0xFFFC;
 		GPIOC->ODR |= ((leftLine.mid16 >> d) & 0x1) | ((midTemp >> d) & 0x2);
 		toggleCLK();
 	}
-	for (int d = 15; d >= 0; d--)
+	for (int d = 0; d < 8; d++)
+	{
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((leftLine.mid16 >> d) & 0x1) | ((midTemp >> d) & 0x2);
+		toggleCLK();
+	}
+	for (int d = 15; d >= 8; d--)
 	{
 		GPIOC->ODR &= 0xFFFC;
 		GPIOC->ODR |= ((leftLine.top16 >> d) & 0x1) | ((topTemp >> d) & 0x2);
+		toggleCLK();
+	}
+	for (int d = 0; d < 8; d++)
+	{
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((leftLine.top16 >> d) & 0x1) | ((topTemp >> d) & 0x2);
+		toggleCLK();
+	}
+
+	// for (int d = 15; d >= 0; d--)
+	// {
+	// 	GPIOC->ODR &= 0xFFFC;
+	// 	GPIOC->ODR |= ((leftLine.bot16 >> d) & 0x1) | ((botTemp >> d) & 0x2);
+	// 	toggleCLK();
+	// }
+	// for (int d = 15; d >= 0; d--)
+	// {
+	// 	GPIOC->ODR &= 0xFFFC;
+	// 	GPIOC->ODR |= ((leftLine.mid16 >> d) & 0x1) | ((midTemp >> d) & 0x2);
+	// 	toggleCLK();
+	// }
+	// for (int d = 15; d >= 0; d--)
+	// {
+	// 	GPIOC->ODR &= 0xFFFC;
+	// 	GPIOC->ODR |= ((leftLine.top16 >> d) & 0x1) | ((topTemp >> d) & 0x2);
+	// 	toggleCLK();
+	// }
+	
+	// toggle pin PC2 (CS) to load line
+	GPIOC->ODR |= 0x0004;
+	GPIOC->ODR &= 0xFFFB;
+}
+
+void sendCommand(uint48 command) // Send 12 bits starting with MSB first (first 4 bits don't matter)
+{
+	unsigned int botTemp = command.bot16 << 1;
+	unsigned int midTemp = command.mid16 << 1;
+	unsigned int topTemp = command.top16 << 1;
+
+	for (int d = 15; d >= 0; d--)
+	{
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((command.bot16 >> d) & 0x1) | ((botTemp >> d) & 0x2);
+		toggleCLK();
+	}
+	for (int d = 15; d >= 0; d--)
+	{
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((command.mid16 >> d) & 0x1) | ((midTemp >> d) & 0x2);
+		toggleCLK();
+	}
+	for (int d = 15; d >= 0; d--)
+	{
+		GPIOC->ODR &= 0xFFFC;
+		GPIOC->ODR |= ((command.top16 >> d) & 0x1) | ((topTemp >> d) & 0x2);
 		toggleCLK();
 	}
 	
