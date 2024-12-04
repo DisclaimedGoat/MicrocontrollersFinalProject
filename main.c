@@ -136,10 +136,10 @@ void SysTick_Handler(void)
 		timer = 50;
 	}
 	
-	uint48 tester;
-	tester.bot16 = 0x04AA;
-	tester.mid16 = 0x0402;
-	tester.top16 = 0x0435;
+	// uint48 tester;
+	// tester.bot16 = 0x04AA;
+	// tester.mid16 = 0x0402;
+	// tester.top16 = 0x0435;
 
 	next_game_frame();
 	// sendLine(EMPTY48, uint48of1(0x0155));
