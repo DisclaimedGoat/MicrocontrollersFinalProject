@@ -36,13 +36,13 @@ int main(void){
 	
 	set_pins_output(GPIOC, 4, P0, P1, P2, P3);
 	set_pins_input(GPIOB, 4, P0, P1, P2, P3);
-	set_pins_pull_down(GPIOB, 4, P0, P1, P2, P3);
+	set_pins_pull_up(GPIOB, 4, P0, P1, P2, P3);
 	
 	LED_Init();
 
 	game_init();
 	
-	EXTI_Init();
+	// EXTI_Init();
 
 	// it is necessary to init the LCD first I think
 //	LCD_Init();

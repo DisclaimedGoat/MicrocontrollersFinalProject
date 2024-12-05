@@ -57,6 +57,8 @@ void game_init(void)
 
 void next_game_frame(void)
 {
+    check_inputs();
+
     if (state == RUN)
     {
         timer--;
@@ -137,6 +139,29 @@ void next_game_frame(void)
 		{
 			  timer = TIME;
 		}
+}
+
+void check_inputs(void)
+{
+    if (GPIOC->IDR | !15)
+    {
+        if (!(GPIOC->IDR & 1)) // Red Button
+        {
+            state = STOP;
+        }
+        if (!(GPIOC->IDR & 2)) // Green Button
+        {
+            state = RUN;
+        }
+        if (!(GPIOC->IDR & 4)) // Yellow Button
+        {
+            direction = LEFT;
+        }
+        if (!(GPIOC->IDR & 8)) // Blue Button
+        {
+            direction = RIGHT;
+        }
+    }
 }
 
 void red_button_pressed(void) {
