@@ -35,22 +35,22 @@ int main(void){
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN | RCC_AHB2ENR_GPIOBEN;
 	
 	set_pins_output(GPIOC, 4, P0, P1, P2, P3);
-	
+	set_pins_input(GPIOB, 4, P0, P1, P2, P3);
+	set_pins_pull_down(GPIOB, 4, P0, P1, P2, P3);
 	
 	LED_Init();
 
 	game_init();
 	
-
-	
-//	EXTI_Init();
+	EXTI_Init();
 
 	// it is necessary to init the LCD first I think
 //	LCD_Init();
 //	LCD_Clear();
 
-	// SysTick_Init(16);
-	SysTick_Init(16);
+	SysTick_Init(160000);
+	
+	while(1);
 }
 
 void EXTI_Init(void)
@@ -61,13 +61,13 @@ void EXTI_Init(void)
 	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI0_PB | SYSCFG_EXTICR1_EXTI1_PB | SYSCFG_EXTICR1_EXTI2_PB | SYSCFG_EXTICR1_EXTI3_PB;
 
 	EXTI->RTSR1 |= EXTI_RTSR1_RT0 | EXTI_RTSR1_RT1 | EXTI_RTSR1_RT2 | EXTI_RTSR1_RT3;
-	EXTI->FTSR1 &= ~EXTI_FTSR1_FT0 & ~EXTI_FTSR1_FT1 & ~EXTI_FTSR1_FT2 & ~EXTI_FTSR1_FT2;
+	EXTI->FTSR1 &= ~EXTI_FTSR1_FT0 & ~EXTI_FTSR1_FT1 & ~EXTI_FTSR1_FT2 & ~EXTI_FTSR1_FT3;
 	EXTI->IMR1 |= EXTI_IMR1_IM0 | EXTI_IMR1_IM1 | EXTI_IMR1_IM2 | EXTI_IMR1_IM3;
 
 	NVIC_SetPriority(EXTI0_IRQn, 1);
 	NVIC_SetPriority(EXTI1_IRQn, 2);
 	NVIC_SetPriority(EXTI2_IRQn, 3);
-	NVIC_SetPriority(EXTI2_IRQn, 4);
+	NVIC_SetPriority(EXTI3_IRQn, 4);
 
 	NVIC_EnableIRQ(EXTI0_IRQn);
 	NVIC_EnableIRQ(EXTI1_IRQn);
@@ -78,7 +78,7 @@ void EXTI_Init(void)
 // Extern handler for Red Button
 void EXTI0_IRQHandler(void)
 {
-	if ((EXTI->PR1 & EXTI_PR1_PIF0) == EXTI_PR1_PIF0)
+	if ((EXTI->PR1 & EXTI_PR1_PIF0) != 0)
 	{
 		red_button_pressed();
 		EXTI->PR1 |= EXTI_PR1_PIF0;
@@ -126,30 +126,7 @@ void SysTick_Init(uint32_t ticks)
 
 void SysTick_Handler(void)
 {
-	if (timer)
-	{
-		timer--;
-	}
-	else 
-	{
-		bit = ~bit;
-		timer = 50;
-	}
-	
-	// uint48 tester;
-	// tester.bot16 = 0x04AA;
-	// tester.mid16 = 0x0402;
-	// tester.top16 = 0x0435;
-
 	next_game_frame();
-	// sendLine(EMPTY48, uint48of1(0x0155));
-	// sendLine(EMPTY48, uint48of1(0x0255));
-	// sendLine(EMPTY48, uint48of1(0x0355));
-	// sendLine(EMPTY48, tester);
-	// sendLine(EMPTY48, uint48of1(0x0555));
-	// sendLine(EMPTY48, uint48of1(0x0655));
-	// sendLine(EMPTY48, uint48of1(0x0755));
-	// sendLine(EMPTY48, uint48of1(0x0855));
 }
 
 void LED_Init(void)

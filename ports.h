@@ -22,3 +22,6 @@ void set_pins_input(GPIO_TypeDef* channel, int num, ...);
 
 // Set the provided pins in the given channel as output
 void set_pins_output(GPIO_TypeDef* channel, int num, ...);
+
+// Set the provided pins in the given channel with pull down resistors
+void set_pins_pull_down(GPIO_TypeDef* channel, int num, ...);

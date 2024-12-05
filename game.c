@@ -9,83 +9,101 @@
 #define LEFT  1
 #define RIGHT 2
 
-static hArray* game_array;
-static hArray* space_array;
-static hArray* player_array; 
-static int running = 0;
+#define STOP  0
+#define RUN   1
+#define OVER  2
+
+#define TIME  10
+
+unsigned int* game_array;
+// static hArray* space_array;
+// static hArray* player_array; 
+unsigned int* space_array;
+unsigned int* player_array;
+static int state = 0;
 static int direction = NONE;
+static int speed = 8;
+static int timer = 10;
 
 void game_init(void)
 {
-    game_array   = (hArray*) malloc(sizeof(int) * SIZEX);
-    space_array  = (hArray*) malloc(sizeof(int) * SIZEX);
-    player_array = (hArray*) malloc(sizeof(int) * SIZEX);
-    // game_array   = &TEST_HORIZONTAL_SCREEN;
-    game_array   = &EMPTY_SCREEN_H;
-    space_array  = &EMPTY_SCREEN_H;
-    player_array = &PLAYER_SCREEN_H;
-	// game_array = &xPLAYER_SCREEN_H;
-
-    running = 1;
-
-    srand(time(NULL)); 
-
-    hArray frame;
-
+    game_array   = (unsigned int*) malloc(sizeof(int) * SIZEX);
+    space_array  = (unsigned int*) malloc(sizeof(int) * SIZEX);
+    player_array = (unsigned int*) malloc(sizeof(int) * SIZEX);
     for (int i = 0; i < SIZEX; i++)
     {
-        frame[i] = (*space_array)[i] | (*player_array)[i];
+        game_array[i]   = TEST_HORIZONTAL_SCREEN[i];
+        space_array[i]  = EMPTY_SCREEN_H[i];
+        player_array[i] = PLAYER_SCREEN_H[i];
     }
-    renderScreenHorizontal(&frame);
+    // game_array   = TEST_HORIZONTAL_SCREEN;
+    // // game_array   = EMPTY_SCREEN_H;
+    // space_array  = EMPTY_SCREEN_H;
+    // player_array = PLAYER_SCREEN_H;
+	// // game_array = &xPLAYER_SCREEN_H;
+
+    state = RUN;
+
+    srand(10000); 
+
+    // hArray frame;
+
+    // for (int i = 0; i < SIZEX; i++)
+    // {
+    //     frame[i] = (*space_array)[i] | (*player_array)[i];
+    // }
+    renderScreenHorizontal(game_array);
 }
 
 void next_game_frame(void)
 {
-    hArray frame;
-    if (running)
+    if (state == RUN)
     {
-        if ((*space_array)[11] == 0) // Need a new obstacle
+        timer--;
+        int checkBit = 0;
+        for (int i = 0; i < SIZEX; i++)
         {
+            checkBit |= space_array[i];
+        }
+        if (!(checkBit >> 20)) // Need a new obstacle
+        {
+            int obstacle = (int) rand() % 4;
             for (int i = 0; i < SIZEX; i++)
             {
-                switch((int) rand() % 4)
+                switch(obstacle)
                 {
                     case 0: 
-                        (*space_array)[i] |= RIGHT_OBSTACLE_SCREEN_H[i];
-                        (*space_array)[i] >> 1;
-                        break;
+                            space_array[i] |= RIGHT_OBSTACLE_SCREEN_H[i];
+                            break;
                     case 1: 
-                        (*space_array)[i] |= LEFT_OBSTACLE_SCREEN_H[i];
-                        (*space_array)[i] >> 1;
-                        break;
+                            space_array[i] |= LEFT_OBSTACLE_SCREEN_H[i];
+                            break;
                     case 2: 
-                        (*space_array)[i] |= MID_OBSTACLE_SCREEN_H[i];
-                        (*space_array)[i] >> 1;
-                        break;
+                            space_array[i] |= MID_OBSTACLE_SCREEN_H[i];
+                            break;
                     case 3: 
-                        (*space_array)[i] |= BOTH_OBSTACLE_SCREEN_H[i];
-                        (*space_array)[i] >> 1;
-                        break;            
+                            space_array[i] |= BOTH_OBSTACLE_SCREEN_H[i];
+                            break;            
                 }   
             }
         }
-
+				
         switch(direction)
         {
             case LEFT:
-                if ((*player_array)[SIZEX - 1] == 0)
+                if (player_array[SIZEX - 1] == 0)
                 {
                     for (int i = SIZEX - 1; i > 0; i--)
-                        (*player_array)[i] = (*player_array)[i - 1];
-                    (*player_array)[0] = 0;
+                        player_array[i] = player_array[i - 1];
+                    player_array[0] = 0;
                 }
                 break;
             case RIGHT:
-                if ((*player_array)[0] == 0)
+                if (player_array[0] == 0)
                 {
-                    for (int i = 0; i < SIZEX - 1>; i++)
-                        (*player_array)[i] = (*player_array)[i + 1];
-                    (*player_array)[SIZEX - 1] = 0;
+                    for (int i = 0; i < SIZEX - 1; i++)
+                        player_array[i] = player_array[i + 1];
+                    player_array[SIZEX - 1] = 0;
                 }
                 break;
             case NONE:
@@ -94,30 +112,39 @@ void next_game_frame(void)
 
         for (int i = 0; i < SIZEX; i++)
         {
-            frame[i] = (*space_array)[i] | (*player_array)[i];
-            if ((*space_array)[i] & (*player_array)[i])
+            if (timer == speed)
             {
-                game_over();
+                space_array[i] >>= 1;
+            }
+            game_array[i] = space_array[i] | player_array[i];
+            if (space_array[i] & player_array[i])
+            {
+                state = OVER;
             }
         }
     } 
 
     direction = NONE;
-    renderScreenHorizontal(&frame);
-}
-
-void game_over(void)
-{
-    renderScreenHorizontal(&TEST_HORIZONTAL_SCREEN);
-    running = 0;
+		if (state == OVER)
+		{
+				renderScreenHorizontal(TEST_HORIZONTAL_SCREEN);
+		}
+		else
+		{
+				renderScreenHorizontal(game_array);
+		}
+		if (timer == speed)
+		{
+			  timer = TIME;
+		}
 }
 
 void red_button_pressed(void) {
-	running = 0;
+	state = STOP;
 }
 
 void green_button_pressed(void) {
-	running = 1;
+	state = RUN;
 }
 
 void yellow_button_pressed(void) {

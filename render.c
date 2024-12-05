@@ -21,12 +21,14 @@ void renderScreen(const array* screen)
     }
 }
 
-void renderScreenHorizontal(const hArray* screen)
+void renderScreenHorizontal(unsigned int* screen)
 {
 	for (unsigned long long col = 1; col <= 8; col++)
     {
-		uint48 leftLine =  { (col << 8) | (((*screen)[col - 1] >> 16) & 0b11111111), (col << 8) | (((*screen)[col - 1] >> 8) & 0b11111111), (col << 8) | ((*screen)[col - 1] & 0b11111111) };
-		uint48 rightLine = { (col << 8) | (((*screen)[col + 7] >> 16) & 0b11111111), (col << 8) | (((*screen)[col + 7] >> 8) & 0b11111111), (col << 8) | ((*screen)[col + 7] & 0b11111111) };
+		// uint48 leftLine =  { (col << 8) | (((*screen)[col - 1] >> 16) & 0b11111111), (col << 8) | (((*screen)[col - 1] >> 8) & 0b11111111), (col << 8) | ((*screen)[col - 1] & 0b11111111) };
+		// uint48 rightLine = { (col << 8) | (((*screen)[col + 7] >> 16) & 0b11111111), (col << 8) | (((*screen)[col + 7] >> 8) & 0b11111111), (col << 8) | ((*screen)[col + 7] & 0b11111111) };
+		uint48 leftLine =  { (col << 8) | ((screen[col - 1] >> 16) & 0b11111111), (col << 8) | ((screen[col - 1] >> 8) & 0b11111111), (col << 8) | (screen[col - 1] & 0b11111111) };
+		uint48 rightLine = { (col << 8) | ((screen[col + 7] >> 16) & 0b11111111), (col << 8) | ((screen[col + 7] >> 8) & 0b11111111), (col << 8) | (screen[col + 7] & 0b11111111) };
 		sendLine(leftLine, rightLine);
 	}
 }
