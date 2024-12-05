@@ -36,7 +36,7 @@ int main(void){
 	
 	set_pins_output(GPIOC, 4, P0, P1, P2, P3);
 	set_pins_input(GPIOB, 4, P0, P1, P2, P3);
-	set_pins_pull_up(GPIOB, 4, P0, P1, P2, P3);
+	set_pins_pull_down(GPIOB, 4, P0, P1, P2, P3);
 	
 	LED_Init();
 
@@ -48,7 +48,7 @@ int main(void){
 //	LCD_Init();
 //	LCD_Clear();
 
-	SysTick_Init(160000);
+	SysTick_Init(80000);
 	
 	while(1);
 }

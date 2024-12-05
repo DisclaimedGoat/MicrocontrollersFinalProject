@@ -22,8 +22,10 @@ unsigned int* space_array;
 unsigned int* player_array;
 static int state = 0;
 static int direction = NONE;
-static int speed = 8;
+static int player_delay = 0;
+static int speed = 5;
 static int timer = 10;
+static unsigned int score = 0;
 
 void game_init(void)
 {
@@ -69,7 +71,7 @@ void next_game_frame(void)
         }
         if (!(checkBit >> 20)) // Need a new obstacle
         {
-            int obstacle = (int) rand() % 4;
+            int obstacle = (int) rand() % 6;
             for (int i = 0; i < SIZEX; i++)
             {
                 switch(obstacle)
@@ -85,32 +87,48 @@ void next_game_frame(void)
                             break;
                     case 3: 
                             space_array[i] |= BOTH_OBSTACLE_SCREEN_H[i];
+                            break;
+                    case 4: 
+                            space_array[i] |= BOTH_LEFT_OBSTACLE_SCREEN_H[i];
+                            break;
+                    case 5: 
+                            space_array[i] |= BOTH_RIGHT_OBSTACLE_SCREEN_H[i];
                             break;            
                 }   
+            }
+            if ((checkBit & 1) && !(checkBit & 2))
+            {
+                score++;   
+                if ((score % 5) == 0 && speed < timer)
+                    speed++;
             }
         }
 				
         switch(direction)
         {
             case LEFT:
-                if (player_array[SIZEX - 1] == 0)
-                {
-                    for (int i = SIZEX - 1; i > 0; i--)
-                        player_array[i] = player_array[i - 1];
-                    player_array[0] = 0;
-                }
-                break;
-            case RIGHT:
-                if (player_array[0] == 0)
+                if (player_array[0] == 0 && player_delay <= 0)
                 {
                     for (int i = 0; i < SIZEX - 1; i++)
                         player_array[i] = player_array[i + 1];
                     player_array[SIZEX - 1] = 0;
+					player_delay = 2;
+                }
+                break;
+            case RIGHT:
+                if (player_array[SIZEX - 1] == 0 && player_delay <= 0)
+                {
+                    for (int i = SIZEX - 1; i > 0; i--)
+                        player_array[i] = player_array[i - 1];
+                    player_array[0] = 0;
+					player_delay = 2;
                 }
                 break;
             case NONE:
+				player_delay = 0;
                 break;
         }
+		player_delay--;
 
         for (int i = 0; i < SIZEX; i++)
         {
@@ -127,39 +145,39 @@ void next_game_frame(void)
     } 
 
     direction = NONE;
-		if (state == OVER)
-		{
-				renderScreenHorizontal(TEST_HORIZONTAL_SCREEN);
-		}
-		else
-		{
-				renderScreenHorizontal(game_array);
-		}
-		if (timer == speed)
-		{
-			  timer = TIME;
-		}
+
+    if (state == OVER)
+        renderScreenHorizontal(TEST_HORIZONTAL_SCREEN);
+    else
+        renderScreenHorizontal(game_array);
+        
+    if (timer == speed)
+        timer = TIME;
 }
 
 void check_inputs(void)
 {
-    if (GPIOC->IDR | !15)
+    if (GPIOB->IDR & 15)
     {
-        if (!(GPIOC->IDR & 1)) // Red Button
+        if (GPIOB->IDR & 1) // Red Button
         {
             state = STOP;
+			return;
         }
-        if (!(GPIOC->IDR & 2)) // Green Button
+        if (GPIOB->IDR & 2) // Green Button
         {
             state = RUN;
+			return;
         }
-        if (!(GPIOC->IDR & 4)) // Yellow Button
+        if (GPIOB->IDR & 4) // Yellow Button
         {
             direction = LEFT;
+			return;
         }
-        if (!(GPIOC->IDR & 8)) // Blue Button
+        if (GPIOB->IDR & 8) // Blue Button
         {
             direction = RIGHT;
+			return;
         }
     }
 }
