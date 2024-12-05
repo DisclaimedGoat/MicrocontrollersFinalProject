@@ -77,3 +77,14 @@ void set_pins_output(GPIO_TypeDef* channel, int num, ...) {
 	
 	va_end(valist);
 }
+
+void put_odr_bit(GPIO_TypeDef* channel, enum Pin pin, int bit) {
+	bit = bit & 1; // mask to the lower bit only
+	
+	if (bit == 0) {
+		channel->ODR &= ~pin;
+	}
+	else {
+		channel->ODR |= pin;
+	}
+}
