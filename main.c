@@ -42,8 +42,6 @@ int main(void){
 	LED_Init();
 
 	game_init();
-	
-	// EXTI_Init();
 
 	// it is necessary to init the LCD first I think
 	LCD_Init();
@@ -53,68 +51,6 @@ int main(void){
 	SysTick_Init(80000);
 	
 	while(1);
-}
-
-void EXTI_Init(void)
-{
-	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
-
-	SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI0 & ~SYSCFG_EXTICR1_EXTI1 & ~SYSCFG_EXTICR1_EXTI2 & ~SYSCFG_EXTICR1_EXTI3;
-	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI0_PB | SYSCFG_EXTICR1_EXTI1_PB | SYSCFG_EXTICR1_EXTI2_PB | SYSCFG_EXTICR1_EXTI3_PB;
-
-	EXTI->RTSR1 |= EXTI_RTSR1_RT0 | EXTI_RTSR1_RT1 | EXTI_RTSR1_RT2 | EXTI_RTSR1_RT3;
-	EXTI->FTSR1 &= ~EXTI_FTSR1_FT0 & ~EXTI_FTSR1_FT1 & ~EXTI_FTSR1_FT2 & ~EXTI_FTSR1_FT3;
-	EXTI->IMR1 |= EXTI_IMR1_IM0 | EXTI_IMR1_IM1 | EXTI_IMR1_IM2 | EXTI_IMR1_IM3;
-
-	NVIC_SetPriority(EXTI0_IRQn, 1);
-	NVIC_SetPriority(EXTI1_IRQn, 2);
-	NVIC_SetPriority(EXTI2_IRQn, 3);
-	NVIC_SetPriority(EXTI3_IRQn, 4);
-
-	NVIC_EnableIRQ(EXTI0_IRQn);
-	NVIC_EnableIRQ(EXTI1_IRQn);
-	NVIC_EnableIRQ(EXTI2_IRQn);
-	NVIC_EnableIRQ(EXTI3_IRQn);
-}
-
-// Extern handler for Red Button
-void EXTI0_IRQHandler(void)
-{
-	if ((EXTI->PR1 & EXTI_PR1_PIF0) != 0)
-	{
-		red_button_pressed();
-		EXTI->PR1 |= EXTI_PR1_PIF0;
-	}
-}
-
-// Extern handler for Green Button
-void EXTI1_IRQHandler(void)
-{
-	if ((EXTI->PR1 & EXTI_PR1_PIF1) == EXTI_PR1_PIF1)
-	{
-		green_button_pressed();
-		EXTI->PR1 |= EXTI_PR1_PIF1;
-	}
-}
-
-// Extern handler for Yellow Button
-void EXTI2_IRQHandler(void)
-{
-	if ((EXTI->PR1 & EXTI_PR1_PIF2) == EXTI_PR1_PIF2)
-	{
-		yellow_button_pressed();
-		EXTI->PR1 |= EXTI_PR1_PIF2;
-	}
-}
-
-// Extern handler for Blue Button
-void EXTI3_IRQHandler(void)
-{
-	if ((EXTI->PR1 & EXTI_PR1_PIF3) == EXTI_PR1_PIF3)
-	{
-		blue_button_pressed();
-		EXTI->PR1 |= EXTI_PR1_PIF3;
-	}
 }
 
 void SysTick_Init(uint32_t ticks)

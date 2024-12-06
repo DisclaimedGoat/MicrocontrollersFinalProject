@@ -2,7 +2,7 @@
 
 #include "types.h"
 
-static const hArray TEST_HORIZONTAL_SCREEN = {
+static const hArray TEST_SCREEN = {
     0b010101010101010101010101,
     0b101010101010101010101010,
     0b010101010101010101010101,
@@ -21,18 +21,18 @@ static const hArray TEST_HORIZONTAL_SCREEN = {
     0b101010101010101010101010,
 };
 
-static const hArray EMPTY_SCREEN_H = {
+static const hArray EMPTY_SCREEN = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-static const hArray PLAYER_SCREEN_H = {
+static const hArray PLAYER_SCREEN = {
     0,0,0,0,0,0,0,
     0b11000,
     0b11000,
     0,0,0,0,0,0,0
 };
 
-static const hArray LEFT_OBSTACLE_SCREEN_H = {
+static const hArray LEFT_OBSTACLE_SCREEN = {
     0,0,0,0,0,0,0,0,0,0,0,
     0b01111000000000000000000000000000,
     0b11111100000000000000000000000000,
@@ -41,7 +41,7 @@ static const hArray LEFT_OBSTACLE_SCREEN_H = {
     0,
 };
 
-static const hArray MID_OBSTACLE_SCREEN_H = {
+static const hArray MID_OBSTACLE_SCREEN = {
     0,0,0,0,0,0,
     0b01111000000000000000000000000000,
     0b11111100000000000000000000000000,
@@ -50,7 +50,7 @@ static const hArray MID_OBSTACLE_SCREEN_H = {
     0,0,0,0,0,0
 };
 
-static const hArray BOTH_OBSTACLE_SCREEN_H = {
+static const hArray BOTH_OBSTACLE_SCREEN = {
     0,
     0b01111000000000000000000000000000,
     0b11111100000000000000000000000000,
@@ -64,7 +64,7 @@ static const hArray BOTH_OBSTACLE_SCREEN_H = {
     0,
 };
 
-static const hArray RIGHT_OBSTACLE_SCREEN_H = {
+static const hArray RIGHT_OBSTACLE_SCREEN = {
     0,
     0b01111000000000000000000000000000,
     0b11111100000000000000000000000000,
@@ -73,7 +73,7 @@ static const hArray RIGHT_OBSTACLE_SCREEN_H = {
     0,0,0,0,0,0,0,0,0,0,0
 };
 
-static const hArray BOTH_LEFT_OBSTACLE_SCREEN_H = {
+static const hArray BOTH_LEFT_OBSTACLE_SCREEN = {
     0b11111100000000000000000000000000,
     0b01111000000000000000000000000000,
     0,0,0,0,0,0,
@@ -84,7 +84,7 @@ static const hArray BOTH_LEFT_OBSTACLE_SCREEN_H = {
     0,0,0,0
 };
 
-static const hArray BOTH_RIGHT_OBSTACLE_SCREEN_H = {
+static const hArray BOTH_RIGHT_OBSTACLE_SCREEN = {
     0,0,0,0,
     0b01111000000000000000000000000000,
     0b11111100000000000000000000000000,
