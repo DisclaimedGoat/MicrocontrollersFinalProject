@@ -96,12 +96,6 @@ void next_game_frame(void)
                             break;            
                 }   
             }
-            if ((checkBit & 1) && !(checkBit & 2))
-            {
-                score++;   
-                if ((score % 5) == 0 && speed < timer)
-                    speed++;
-            }
         }
 				
         switch(direction)
@@ -135,6 +129,12 @@ void next_game_frame(void)
             if (timer == speed)
             {
                 space_array[i] >>= 1;
+								if ((checkBit & 1) && (checkBit & 2) == 0)
+								{
+										score++;   
+										if ((score % 5) == 0 && speed < timer)
+												speed++;
+								}
             }
             game_array[i] = space_array[i] | player_array[i];
             if (space_array[i] & player_array[i])

@@ -5,7 +5,7 @@
 
 #include "stdbool.h"
 
-# define DELAY 80
+# define DELAY 4000
 
 # define OUT GPIOC
 # define E_PIN P4
@@ -100,6 +100,7 @@ void LCD_Init(void){
 
   // Clear display
   LCD_Clear();
+	wait(10);
   
   // Entry mode
   LCD_WriteCom(0x06);

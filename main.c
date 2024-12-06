@@ -2,6 +2,7 @@
 #include "ports.h"
 #include "render.h"
 #include "game.h"
+#include "LCD.h"
 #include <stdio.h>
 
 // PB0 -> Red Button
@@ -45,8 +46,9 @@ int main(void){
 	// EXTI_Init();
 
 	// it is necessary to init the LCD first I think
-//	LCD_Init();
-//	LCD_Clear();
+	LCD_Init();
+	LCD_Clear();
+	LCD_DisplayString(0, "Hello");
 
 	SysTick_Init(80000);
 	
