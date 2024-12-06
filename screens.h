@@ -114,16 +114,16 @@ static const hArray START_SCREEN = {
     0b110101010101101010101011,
 };
 
-static const hArray PLAYER_EXPLOSION_SCREEN_1 = {
+static const hArray PLAYER_EXPLOSION_SCREENS[4] = {
+{
     0,0,0,0,0,0,
     0b011000,
     0b100100,
     0b100100,
     0b011000,
     0,0,0,0,0,0
-};
-
-static const hArray PLAYER_EXPLOSION_SCREEN_2 = {
+},
+{
     0,0,0,0,0,
     0b0010000,
     0b0100100,
@@ -132,9 +132,8 @@ static const hArray PLAYER_EXPLOSION_SCREEN_2 = {
     0b0100100,
     0b0001000,
     0,0,0,0,0
-};
-
-static const hArray PLAYER_EXPLOSION_SCREEN_3 = {
+},
+{
     0,0,0,
     0b01000,
     0b10000,
@@ -145,9 +144,8 @@ static const hArray PLAYER_EXPLOSION_SCREEN_3 = {
     0b01000,
     0b10000,
     0,0,0
-};
-
-static const hArray PLAYER_EXPLOSION_SCREEN_4 = {
+},
+{
     0,0,
     0b10,
     0,0,
@@ -155,5 +153,5 @@ static const hArray PLAYER_EXPLOSION_SCREEN_4 = {
     0,0,0,0,0,0,0,
     0b1000000,
     0,0
-};
+}};
 

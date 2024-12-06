@@ -48,7 +48,7 @@ int main(void){
 	LCD_Clear();
 	LCD_DisplayString(0, "Hello");
 
-	SysTick_Init(80000);
+	SysTick_Init(40000);
 	
 	while(1);
 }
