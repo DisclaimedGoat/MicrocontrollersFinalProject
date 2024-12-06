@@ -46,7 +46,8 @@ int main(void){
 	// it is necessary to init the LCD first I think
 	LCD_Init();
 	LCD_Clear();
-	LCD_DisplayString(0, "Hello");
+	
+	LCD_PrintEach("Hello", "World");
 
 	SysTick_Init(80000);
 	

@@ -42,9 +42,9 @@ void LCD_PutNibble(unsigned char nybble) {
 
 void LCD_Pulse(void) {
   put_odr_bit(OUT, E_PIN, 1);
-  wait(10);
+  wait(2);
   put_odr_bit(OUT, E_PIN, 0);
-  wait(10);
+  wait(2);
 }
 
 // Write command to LCD
@@ -114,14 +114,35 @@ void LCD_Clear(void){
   wait(2);
 }
 
-void LCD_DisplayString(unsigned int line, unsigned char *ptr) {
+void LCD_Print(const char* msg) {
+	LCD_Clear();
+
+	LCD_WriteCom(0x80);
+	
+	int charCount = 0;
+	const char* t = msg;	
+	for ( ; *t != '\0'; charCount++, t++) {
+		if (charCount == 16) {
+			LCD_WriteCom(0x80 + 0x40);
+		}
+		LCD_WriteData(*t);
+	}
+}
+
+void LCD_PrintEach(const char* line0, const char* line1) {
+	LCD_PrintLine(0, line0);
+	wait(2);
+	LCD_PrintLine(1, line1);
+}
+
+void LCD_PrintLine(unsigned int line, const char *ptr) {
   if (line == 0)
     LCD_WriteCom(0x80);
   else if (line == 1)
     LCD_WriteCom(0x80 + 0x40);
   
   
-	for (unsigned char *t = ptr; *t != '\0'; t++) {
+	for (const char *t = ptr; *t != '\0'; t++) {
     LCD_WriteData(*t);
   }
 }
