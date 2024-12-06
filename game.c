@@ -9,11 +9,12 @@
 #define LEFT  1
 #define RIGHT 2
 
-#define STOP  0
+#define TIME  10
+
+#define START 0
 #define RUN   1
 #define OVER  2
-
-#define TIME  10
+#define HIGH  3
 
 unsigned int* game_array;
 // static hArray* space_array;
@@ -44,7 +45,7 @@ void game_init(void)
     // player_array = PLAYER_SCREEN_H;
 	// // game_array = &xPLAYER_SCREEN_H;
 
-    state = RUN;
+    state = START;
 
     srand(10000); 
 
@@ -60,6 +61,18 @@ void game_init(void)
 void next_game_frame(void)
 {
     check_inputs();
+	
+    switch(state)
+    {
+        case START:
+            break;
+        case RUN:
+            break;
+        case OVER:
+            break;
+        case HIGH:
+            break;
+    }
 
     if (state == RUN)
     {
@@ -147,7 +160,7 @@ void next_game_frame(void)
     direction = NONE;
 
     if (state == OVER)
-        renderScreenHorizontal(TEST_HORIZONTAL_SCREEN);
+        renderScreenHorizontal(START_SCREEN);
     else
         renderScreenHorizontal(game_array);
         

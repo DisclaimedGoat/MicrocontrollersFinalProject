@@ -5,15 +5,15 @@
 
 #include "stdbool.h"
 
-# define DELAY 4000
+# define DELAY 80
 
 # define OUT GPIOC
 # define E_PIN P4
 # define RS_PIN P5
-# define D0_PIN P6
-# define D1_PIN P7
-# define D2_PIN P8
-# define D3_PIN P9
+# define D4_PIN P6
+# define D5_PIN P7
+# define D6_PIN P8
+# define D7_PIN P9
 
 void LCD_PutNibble(unsigned char nybble);
 void LCD_Pulse(void);
@@ -29,15 +29,15 @@ void wait(unsigned int t) {
 }
 
 void LCD_PutNibble(unsigned char nybble) {
-	put_odr_bit(OUT, D0_PIN, 0);
-	put_odr_bit(OUT, D1_PIN, 0);
-	put_odr_bit(OUT, D2_PIN, 0);
-	put_odr_bit(OUT, D3_PIN, 0);
+	put_odr_bit(OUT, D4_PIN, 0);
+	put_odr_bit(OUT, D5_PIN, 0);
+	put_odr_bit(OUT, D6_PIN, 0);
+	put_odr_bit(OUT, D7_PIN, 0);
 	
-	put_odr_bit(OUT, D0_PIN, nybble);
-	put_odr_bit(OUT, D1_PIN, nybble >> 1);
-	put_odr_bit(OUT, D2_PIN, nybble >> 2);
-	put_odr_bit(OUT, D3_PIN, nybble >> 3);
+	put_odr_bit(OUT, D4_PIN, nybble);
+	put_odr_bit(OUT, D5_PIN, nybble >> 1);
+	put_odr_bit(OUT, D6_PIN, nybble >> 2);
+	put_odr_bit(OUT, D7_PIN, nybble >> 3);
 }
 
 void LCD_Pulse(void) {
@@ -74,7 +74,7 @@ void LCD_WriteData(unsigned char dat) {
 
 void LCD_Init(void){
 	
-	set_pins_output(GPIOC, 6, E_PIN, RS_PIN, D0_PIN, D1_PIN, D2_PIN, D3_PIN);
+	set_pins_output(GPIOC, 6, E_PIN, RS_PIN, D4_PIN, D5_PIN, D6_PIN, D7_PIN);
   
   // Commands to LCD:
   // i. 4-bit bus, 2-line display mode, 5x8 dot matrix
