@@ -23,8 +23,8 @@ unsigned int* player_array;
 static int state = 0;
 static int direction = NONE;
 static int player_delay = 0;
-static int speed = 0;
-static int timer = TIME;
+static int speed;
+static unsigned int timer = TIME;
 static unsigned int score = 0;
 static unsigned int high_score = 0;
 static unsigned int explosion = 0;
@@ -55,6 +55,7 @@ void next_game_frame(void)
     switch(state)
     {
         case START:
+            timer++;
             for (int i = 0; i < SIZEX; i++)
             {
                 game_array[i]   = START_SCREEN[i];
@@ -64,23 +65,29 @@ void next_game_frame(void)
             switch (direction)
             {
                 case LEFT:
-                    if (speed < 6)
-                    {
-                        speed += 2;
-                        difficulty++;
-                        // Print difficulty
-                        while (direction == LEFT)
-                            check_inputs();
-                    }
-                    break;
-                case RIGHT:
                     if (speed > 0)
                     {
                         speed -= 2;
                         difficulty--;
                         // Print difficulty
-                        while (direction == RIGHT)
+                        while (direction == LEFT)
+						{
+							direction = NONE;
                             check_inputs();
+						}
+                    }
+                    break;
+                case RIGHT:
+                    if (speed < 6)
+                    {
+                        speed += 2;
+                        difficulty++;
+                        // Print difficulty
+                        while (direction == RIGHT)
+						{
+						    direction = NONE;
+                            check_inputs();
+						}
                     }
                     break;
             }
@@ -129,7 +136,7 @@ void next_game_frame(void)
                         for (int i = 0; i < SIZEX - 1; i++)
                             player_array[i] = player_array[i + 1];
                         player_array[SIZEX - 1] = 0;
-                        player_delay = 2;
+                        player_delay = 4;
                     }
                     break;
                 case RIGHT:
@@ -138,7 +145,7 @@ void next_game_frame(void)
                         for (int i = SIZEX - 1; i > 0; i--)
                             player_array[i] = player_array[i - 1];
                         player_array[0] = 0;
-                        player_delay = 2;
+                        player_delay = 4;
                     }
                     break;
                 case NONE:
@@ -164,12 +171,13 @@ void next_game_frame(void)
                         state = OVER;
                     }
                 }
-						timer = TIME;
+				timer = TIME;
             }
             break;
         case PAUSE:
             break;
         case OVER:
+            speed = 0;
             timer--;
             if (timer <= 0)
             {
@@ -211,6 +219,11 @@ void check_inputs(void)
         }
         if (GPIOB->IDR & 2) // Green Button
         {
+            if (state == START)
+            {
+                srand(timer);
+                timer = TIME;
+            }
             state = RUN;
 			return;
         }
