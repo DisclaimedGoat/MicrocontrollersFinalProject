@@ -28,10 +28,13 @@ unsigned int* player_array;
 static int state = 0;
 static int direction = NONE;
 static int player_delay = 0;
-static int speed = 5;
-static int timer = 10;
+static int speed;
+static unsigned int timer = TIME;
 static unsigned int score = 0;
 static unsigned int high_score = 0;
+static unsigned int explosion = 0;
+const unsigned char* DIFFICULTIES[4] = { "Easy", "Medium", "Hard", "Insane" };
+static unsigned int difficulty = 0;
 
 static int lcd_refresh_count = 0;
 
@@ -65,111 +68,156 @@ void next_game_frame(void)
 {
 	check_inputs();
 	
-	
-								
-	switch(state)
-	{
-			case START:
-					// Level select
-					break;
-			case RUN:
-					timer--;
-					int checkBit = 0;
-					for (int i = 0; i < SIZEX; i++)
-					{
-							checkBit |= space_array[i];
-					}
-					if (!(checkBit >> 20)) // Need a new obstacle
-					{
-							int obstacle = (int) rand() % 6;
-							for (int i = 0; i < SIZEX; i++)
-							{
-									switch(obstacle)
-									{
-											case 0: 
-															space_array[i] |= RIGHT_OBSTACLE_SCREEN[i];
-															break;
-											case 1: 
-															space_array[i] |= LEFT_OBSTACLE_SCREEN[i];
-															break;
-											case 2: 
-															space_array[i] |= MID_OBSTACLE_SCREEN[i];
-															break;
-											case 3: 
-															space_array[i] |= BOTH_OBSTACLE_SCREEN[i];
-															break;
-											case 4: 
-															space_array[i] |= BOTH_LEFT_OBSTACLE_SCREEN[i];
-															break;
-											case 5: 
-															space_array[i] |= BOTH_RIGHT_OBSTACLE_SCREEN[i];
-															break;            
-									}   
-							}
-					}
-									
-					switch(direction)
-					{
-							case LEFT:
-									if (player_array[0] == 0 && player_delay <= 0)
-									{
-											for (int i = 0; i < SIZEX - 1; i++)
-													player_array[i] = player_array[i + 1];
-											player_array[SIZEX - 1] = 0;
-											player_delay = 2;
-									}
-									break;
-							case RIGHT:
-									if (player_array[SIZEX - 1] == 0 && player_delay <= 0)
-									{
-											for (int i = SIZEX - 1; i > 0; i--)
-													player_array[i] = player_array[i - 1];
-											player_array[0] = 0;
-											player_delay = 2;
-									}
-									break;
-							case NONE:
-									player_delay = 0;
-									break;
-					}
-					player_delay--;
+    switch(state)
+    {
+        case START:
+            timer++;
+            for (int i = 0; i < SIZEX; i++)
+            {
+                game_array[i]   = START_SCREEN[i];
+                space_array[i]  = EMPTY_SCREEN[i];
+                player_array[i] = PLAYER_SCREEN[i];
+            }
+            switch (direction)
+            {
+                case LEFT:
+                    if (speed > 0)
+                    {
+                        speed -= 2;
+                        difficulty--;
+                        // Print difficulty
+                        while (direction == LEFT)
+						{
+							direction = NONE;
+                            check_inputs();
+						}
+                    }
+                    break;
+                case RIGHT:
+                    if (speed < 6)
+                    {
+                        speed += 2;
+                        difficulty++;
+                        // Print difficulty
+                        while (direction == RIGHT)
+						{
+						    direction = NONE;
+                            check_inputs();
+						}
+                    }
+                    break;
+            }
+            break;
+        case RUN:
+            timer--;
+            int checkBit = 0;
+            for (int i = 0; i < SIZEX; i++)
+            {
+                checkBit |= space_array[i];
+            }
+            if (!(checkBit >> 20)) // Need a new obstacle
+            {
+                int obstacle = (int) rand() % 6;
+                for (int i = 0; i < SIZEX; i++)
+                {
+                    switch(obstacle)
+                    {
+                        case 0: 
+                            space_array[i] |= RIGHT_OBSTACLE_SCREEN[i];
+                            break;
+                        case 1: 
+                            space_array[i] |= LEFT_OBSTACLE_SCREEN[i];
+                            break;
+                        case 2: 
+                            space_array[i] |= MID_OBSTACLE_SCREEN[i];
+                            break;
+                        case 3: 
+                            space_array[i] |= BOTH_OBSTACLE_SCREEN[i];
+                            break;
+                        case 4: 
+                            space_array[i] |= BOTH_LEFT_OBSTACLE_SCREEN[i];
+                            break;
+                        case 5: 
+                            space_array[i] |= BOTH_RIGHT_OBSTACLE_SCREEN[i];
+                            break;            
+                    }   
+                }
+            }
+                    
+            switch(direction)
+            {
+                case LEFT:
+                    if (player_array[0] == 0 && player_delay <= 0)
+                    {
+                        for (int i = 0; i < SIZEX - 1; i++)
+                            player_array[i] = player_array[i + 1];
+                        player_array[SIZEX - 1] = 0;
+                        player_delay = 4;
+                    }
+                    break;
+                case RIGHT:
+                    if (player_array[SIZEX - 1] == 0 && player_delay <= 0)
+                    {
+                        for (int i = SIZEX - 1; i > 0; i--)
+                            player_array[i] = player_array[i - 1];
+                        player_array[0] = 0;
+                        player_delay = 4;
+                    }
+                    break;
+                case NONE:
+                    player_delay = 0;
+                    break;
+            }
+            player_delay--;
 
-					for (int i = 0; i < SIZEX; i++)
-					{
-							if (timer == speed)
-							{
-									space_array[i] >>= 1;
-									if ((checkBit & 1) && (checkBit & 2) == 0)
-									{
-											score++;   
-											if ((score % 5) == 0 && speed < timer)
-													speed++;
-									}
-							}
-							game_array[i] = space_array[i] | player_array[i];
-							if (space_array[i] & player_array[i])
-							{
-									state = OVER;
-							}
-					}
-					break;
-			case PAUSE:
-					break;
-			case OVER:
-					for (int i = 0; i < SIZEX; i++)
-					{
-							game_array[i]   = START_SCREEN[i]; // change this to explosion later
-					} 
-					if (score > high_score)
-							state = HIGH;
-					else
-							state = START;
-					break;
-			case HIGH:
-					// put in name
-					state = START;
-					break;
-	} 
+            if (timer == speed)
+            {
+                if ((checkBit & 1) && (checkBit & 2) == 0)
+                {
+                    score++;   
+                    if ((score % 10) == 0 && speed < TIME)
+                        speed++;
+                }
+                for (int i = 0; i < SIZEX; i++)
+                {
+                    space_array[i] >>= 1;
+                    game_array[i] = space_array[i] | player_array[i];
+                    if (space_array[i] & player_array[i])
+                    {
+                        state = OVER;
+                    }
+                }
+				timer = TIME;
+            }
+            break;
+        case PAUSE:
+            break;
+        case OVER:
+            speed = 0;
+            timer--;
+            if (timer <= 0)
+            {
+                for (int i = 0; i < SIZEX; i++)
+                {
+                    game_array[i] = PLAYER_EXPLOSION_SCREENS[explosion][i]; // change this to explosion later
+                } 
+                explosion++;
+                if (explosion > 3)
+				{
+                    if (score > high_score)
+                        state = HIGH;
+                    else
+                        state = START;
+                    explosion = 0;
+				}
+				timer = TIME * 2;
+            }
+            break;
+        case HIGH:
+            // put in name
+            state = START;
+            break;
+    } 
 
 	renderScreen(game_array);
 
@@ -192,6 +240,11 @@ void check_inputs(void)
         }
         if (GPIOB->IDR & 2) // Green Button
         {
+            if (state == START)
+            {
+                srand(timer);
+                timer = TIME;
+            }
             state = RUN;
 			return;
         }

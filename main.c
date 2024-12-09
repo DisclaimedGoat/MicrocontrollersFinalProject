@@ -49,7 +49,7 @@ int main(void){
 	
 	LCD_PrintEach("Hello", "World");
 
-	SysTick_Init(80000);
+	SysTick_Init(40000);
 	
 	while(1);
 }
