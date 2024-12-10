@@ -38,6 +38,7 @@ int main(void){
 	set_pins_output(GPIOC, 4, P0, P1, P2, P3);
 	set_pins_input(GPIOB, 4, P0, P1, P2, P3);
 	set_pins_pull_down(GPIOB, 4, P0, P1, P2, P3);
+	set_pins_output(GPIOB, 1, P4);
 	
 	LED_Init();
 

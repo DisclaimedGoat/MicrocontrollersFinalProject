@@ -7,6 +7,7 @@
 #include "game.h"
 #include "screens.h"
 #include "LCD.h"
+#include "ports.h"
 
 #define LCD_REFRESH_TICKS 25
 
@@ -38,6 +39,7 @@ static unsigned int explosion = 0;
 const char* DIFFICULTIES[4] = { "      Easy >    ", "   < Medium >   ", "    < Hard >    ", "   < Insane     " };
 static unsigned int difficulty = 0;
 static unsigned int character = 0;
+static char name[3] = {'/', '/', '/'};
 
 static int lcd_refresh_count = 0;
 
@@ -68,8 +70,6 @@ void update_lcd() {
 void next_game_frame(void)
 {
 	check_inputs();
-
-    char name[3];
 	
     switch(state)
     {
@@ -175,6 +175,7 @@ void next_game_frame(void)
 
             if (timer == speed)
             {
+                timer = TIME;
                 if ((checkBit & 1) && (checkBit & 2) == 0)
                 {
                     score++;
@@ -182,7 +183,10 @@ void next_game_frame(void)
                     sprintf(score_str, "Score: %-9d", score);
                     LCD_PrintLine(1, score_str);
                     if ((score % 10) == 0 && speed < 10)
+                    {
                         speed++;
+                        buzz(5, 10);
+                    }
                 }
                 for (int i = 0; i < SIZEX; i++)
                 {
@@ -191,9 +195,9 @@ void next_game_frame(void)
                     if (space_array[i] & player_array[i])
                     {
                         state = OVER;
+                        timer = 5;
                     }
                 }
-				timer = TIME;
             }
             break;
         case PAUSE:
@@ -201,6 +205,10 @@ void next_game_frame(void)
         case OVER:
             speed = 0;
             timer--;
+            put_odr_bit(GPIOB, P4, 1);
+            delay(40);
+            put_odr_bit(GPIOB, P4, 0);
+            delay(40);
             if (timer <= 0)
             {
                 for (int i = 0; i < SIZEX; i++)
@@ -214,17 +222,24 @@ void next_game_frame(void)
                     {
                         high_score = score;
                         state = HIGH;
-                        LCD_PrintLine(0, " NEW HIGH SCORE ");
+                        timer = 20;
+                        char high_str[17];
+                        sprintf(high_str, "NEW BEST! %-6d", high_score);
+                        LCD_PrintLine(0, high_str);
                         name[0] = '/';
                         name[1] = '/';
                         name[2] = '/';
+                        for (int i = 0; i < SIZEX; i++)
+                        {
+                            game_array[i] = EMPTY_SCREEN[i]; // change this to explosion later
+                        } 
                     }
                     else
                         state = START;
                     score = 0;
                     explosion = 0;
 				}
-				timer = TIME * 2;
+				timer = 5;
             }
             break;
         case HIGH:
@@ -281,8 +296,27 @@ void next_game_frame(void)
                         break;
                 }
             }
-            char name_str[17];
-            sprintf(name_str, "Enter name: %s  ", name);
+            timer--;
+            char name_str[20];
+            if (timer <= 5)
+            {
+                switch (character)
+                {
+                    case 0:
+                        sprintf(name_str, "Enter name:  %c%c  ", name[1], name[2]);
+                        break;
+                    case 1:
+                        sprintf(name_str, "Enter name: %c %c  ", name[0], name[2]);
+                        break;
+                    case 2:
+                        sprintf(name_str, "Enter name: %c%c   ", name[0], name[1]);
+                        break;
+                }
+            }
+            else
+                sprintf(name_str, "Enter name: %s  ", name);
+            if (timer <= 0)
+                timer = 20;
             LCD_PrintLine(1, name_str);
             break;
     } 
@@ -317,7 +351,7 @@ void check_inputs(void)
                 timer = TIME;
                 difficulty = 0;
                 char high_score_str[17];
-                sprintf(high_score_str, "High Score: %-4d", high_score);
+                sprintf(high_score_str, "High: %s - %-5d", name, high_score);
                 LCD_PrintLine(0, high_score_str);
                 LCD_PrintLine(1, "Score: 0        ");
 
@@ -337,4 +371,23 @@ void check_inputs(void)
 			return;
         }
     }
+}
+
+void buzz(unsigned int count, unsigned int d_count)
+{
+    put_odr_bit(GPIOB, P4, 0);
+    for (int i = 0; i < count; i++)
+    {
+        put_odr_bit(GPIOB, P4, 1);
+        delay(d_count);
+        put_odr_bit(GPIOB, P4, 0);
+        delay(d_count);
+    }
+}
+
+void delay(unsigned int n)
+{
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < 80; j++)
+            ;
 }
