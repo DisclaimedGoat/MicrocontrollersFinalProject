@@ -13,8 +13,10 @@
 #define NONE  0
 #define LEFT  1
 #define RIGHT 2
+#define UP    3
+#define DOWN  4
 
-#define TIME  10
+#define TIME  15
 
 #define START 0
 #define RUN   1
@@ -33,8 +35,9 @@ static unsigned int timer = TIME;
 static unsigned int score = 0;
 static unsigned int high_score = 0;
 static unsigned int explosion = 0;
-const unsigned char* DIFFICULTIES[4] = { "Easy", "Medium", "Hard", "Insane" };
+const char* DIFFICULTIES[4] = { "      Easy >    ", "   < Medium >   ", "    < Hard >    ", "   < Insane     " };
 static unsigned int difficulty = 0;
+static unsigned int character = 0;
 
 static int lcd_refresh_count = 0;
 
@@ -51,8 +54,6 @@ void game_init(void)
     }
 
     state = START;
-
-    srand(10000); 
 }
 
 void update_lcd() {
@@ -67,6 +68,8 @@ void update_lcd() {
 void next_game_frame(void)
 {
 	check_inputs();
+
+    char name[3];
 	
     switch(state)
     {
@@ -78,6 +81,7 @@ void next_game_frame(void)
                 space_array[i]  = EMPTY_SCREEN[i];
                 player_array[i] = PLAYER_SCREEN[i];
             }
+            LCD_PrintLine(0, "- Level Select -");
             switch (direction)
             {
                 case LEFT:
@@ -85,7 +89,6 @@ void next_game_frame(void)
                     {
                         speed -= 2;
                         difficulty--;
-                        // Print difficulty
                         while (direction == LEFT)
 						{
 							direction = NONE;
@@ -98,7 +101,6 @@ void next_game_frame(void)
                     {
                         speed += 2;
                         difficulty++;
-                        // Print difficulty
                         while (direction == RIGHT)
 						{
 						    direction = NONE;
@@ -107,6 +109,7 @@ void next_game_frame(void)
                     }
                     break;
             }
+            LCD_PrintLine(1, DIFFICULTIES[difficulty]);
             break;
         case RUN:
             timer--;
@@ -152,7 +155,7 @@ void next_game_frame(void)
                         for (int i = 0; i < SIZEX - 1; i++)
                             player_array[i] = player_array[i + 1];
                         player_array[SIZEX - 1] = 0;
-                        player_delay = 4;
+                        player_delay = 8;
                     }
                     break;
                 case RIGHT:
@@ -161,7 +164,7 @@ void next_game_frame(void)
                         for (int i = SIZEX - 1; i > 0; i--)
                             player_array[i] = player_array[i - 1];
                         player_array[0] = 0;
-                        player_delay = 4;
+                        player_delay = 8;
                     }
                     break;
                 case NONE:
@@ -174,8 +177,11 @@ void next_game_frame(void)
             {
                 if ((checkBit & 1) && (checkBit & 2) == 0)
                 {
-                    score++;   
-                    if ((score % 10) == 0 && speed < TIME)
+                    score++;
+                    char score_str[17];
+                    sprintf(score_str, "Score: %-9d", score);
+                    LCD_PrintLine(1, score_str);
+                    if ((score % 10) == 0 && speed < 10)
                         speed++;
                 }
                 for (int i = 0; i < SIZEX; i++)
@@ -205,17 +211,79 @@ void next_game_frame(void)
                 if (explosion > 3)
 				{
                     if (score > high_score)
+                    {
+                        high_score = score;
                         state = HIGH;
+                        LCD_PrintLine(0, " NEW HIGH SCORE ");
+                        name[0] = '/';
+                        name[1] = '/';
+                        name[2] = '/';
+                    }
                     else
                         state = START;
+                    score = 0;
                     explosion = 0;
 				}
 				timer = TIME * 2;
             }
             break;
         case HIGH:
-            // put in name
-            state = START;
+            check_inputs();
+            if (character == 2 && direction == RIGHT)
+            {
+                while (direction == RIGHT)
+                {
+                    direction = NONE;
+                    check_inputs();
+                }
+                state = START;
+                character = 0;
+            }
+            else
+            {
+                char cur_char = name[character];
+                switch(direction)
+                {
+                    case UP:
+                        cur_char++;
+                        if (cur_char > 57 && cur_char < 65)
+                            cur_char = 65;
+                        else if (cur_char > 90)
+                            cur_char = 48;
+                        name[character] = cur_char;
+                        while (direction == UP)
+						{
+							direction = NONE;
+                            check_inputs();
+						}
+                        break;
+                    case DOWN:
+                        cur_char--;
+                        if (cur_char > 57 && cur_char < 65)
+                            cur_char = 57;
+                        else if (cur_char < 48)
+                            cur_char = 90;
+                        name[character] = cur_char;
+                        while (direction == DOWN)
+						{
+							direction = NONE;
+                            check_inputs();
+						}
+                        break;
+                    case RIGHT:
+                        if (cur_char != '/')
+                            character++;
+                        while (direction == RIGHT)
+						{
+							direction = NONE;
+                            check_inputs();
+						}
+                        break;
+                }
+            }
+            char name_str[17];
+            sprintf(name_str, "Enter name: %s  ", name);
+            LCD_PrintLine(1, name_str);
             break;
     } 
 
@@ -226,7 +294,7 @@ void next_game_frame(void)
 	if (timer == speed)
 			timer = TIME;
 	
-	update_lcd();
+	// update_lcd();
 }
 
 void check_inputs(void)
@@ -235,17 +303,27 @@ void check_inputs(void)
     {
         if (GPIOB->IDR & 1) // Red Button
         {
-            state = PAUSE;
+            direction = UP;
+            if (state == RUN)
+                state = PAUSE;
 			return;
         }
         if (GPIOB->IDR & 2) // Green Button
         {
+            direction = DOWN;
             if (state == START)
             {
                 srand(timer);
                 timer = TIME;
+                difficulty = 0;
+                char high_score_str[17];
+                sprintf(high_score_str, "High Score: %-4d", high_score);
+                LCD_PrintLine(0, high_score_str);
+                LCD_PrintLine(1, "Score: 0        ");
+
             }
-            state = RUN;
+            if (state == START || state == PAUSE)
+                state = RUN;
 			return;
         }
         if (GPIOB->IDR & 4) // Yellow Button

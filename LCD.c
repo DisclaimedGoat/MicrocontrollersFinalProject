@@ -140,7 +140,7 @@ void LCD_PrintLine(unsigned int line, const char *ptr) {
     LCD_WriteCom(0x80);
   else if (line == 1)
     LCD_WriteCom(0x80 + 0x40);
-  
+	wait(5);
   
 	for (const char *t = ptr; *t != '\0'; t++) {
     LCD_WriteData(*t);
