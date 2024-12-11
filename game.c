@@ -34,12 +34,12 @@ static int player_delay = 0;
 static int speed;
 static unsigned int timer = TIME;
 static unsigned int score = 0;
-static unsigned int high_score = 0;
+static unsigned int high_score = 200;
 static unsigned int explosion = 0;
 const char* DIFFICULTIES[4] = { "      Easy >    ", "   < Medium >   ", "    < Hard >    ", "   < Insane     " };
 static unsigned int difficulty = 0;
 static unsigned int character = 0;
-static char name[3] = {'/', '/', '/'};
+static char name[3] = {'D', 'A', 'N'};
 
 static int lcd_refresh_count = 0;
 
@@ -56,15 +56,6 @@ void game_init(void)
     }
 
     state = START;
-}
-
-void update_lcd() {
-	// Only update every 'LCD_REFRESH_TICKS'
-	if (++lcd_refresh_count % LCD_REFRESH_TICKS != 0) return;
-	
-	char* buff;
-	snprintf(buff, 32, "Count: %d", lcd_refresh_count);
-	LCD_Print(buff);
 }
 
 void next_game_frame(void)
@@ -88,6 +79,7 @@ void next_game_frame(void)
                     if (speed > 0)
                     {
                         speed -= 2;
+                        score -= 10;
                         difficulty--;
                         while (direction == LEFT)
 						{
@@ -100,6 +92,7 @@ void next_game_frame(void)
                     if (speed < 6)
                     {
                         speed += 2;
+                        score += 10;
                         difficulty++;
                         while (direction == RIGHT)
 						{
@@ -203,6 +196,7 @@ void next_game_frame(void)
         case PAUSE:
             break;
         case OVER:
+            unsigned int stall;
             speed = 0;
             timer--;
             put_odr_bit(GPIOB, P4, 1);
@@ -233,13 +227,36 @@ void next_game_frame(void)
                         {
                             game_array[i] = EMPTY_SCREEN[i]; // change this to explosion later
                         } 
+                        explosion = 0;
+                        score = 0;
                     }
                     else
-                        state = START;
-                    score = 0;
-                    explosion = 0;
+                    {
+                        if (stall > 0)
+                        {
+                            LCD_PrintLine(0, "                ");
+                            LCD_PrintLine(1, "                ");
+                            delay(100);
+                            char high_score_str[17];
+                            sprintf(high_score_str, "High: %s - %-5d", name, high_score);
+                            LCD_PrintLine(0, high_score_str);
+                            char score_str[17];
+                            sprintf(score_str, "Score: %-9d", score);
+                            LCD_PrintLine(1, score_str);
+                            delay(300);
+                            stall--;
+                        }
+                        else
+                        {
+                            explosion = 0;
+                            score = 0;
+                            state = START;
+                        }
+                    }
 				}
-				timer = 5;
+                else 
+                    stall = 5;
+                timer = 5;     
             }
             break;
         case HIGH:
@@ -353,8 +370,9 @@ void check_inputs(void)
                 char high_score_str[17];
                 sprintf(high_score_str, "High: %s - %-5d", name, high_score);
                 LCD_PrintLine(0, high_score_str);
-                LCD_PrintLine(1, "Score: 0        ");
-
+                char score_str[17];
+                sprintf(score_str, "Score: %-9d", score);
+                LCD_PrintLine(1, score_str);
             }
             if (state == START || state == PAUSE)
                 state = RUN;
